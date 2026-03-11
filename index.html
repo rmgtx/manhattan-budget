@@ -1,0 +1,659 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Can You Afford Manhattan? 🗽</title>
+  <link href="https://fonts.googleapis.com/css2?family=Google+Sans:wght@400;500;700&family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --primary: #1a73e8;
+      --primary-dark: #1557b0;
+      --secondary: #ea4335;
+      --accent: #fbbc04;
+      --green: #34a853;
+      --surface: #ffffff;
+      --surface2: #f8f9fa;
+      --on-surface: #202124;
+      --on-surface-medium: #5f6368;
+      --border: #dadce0;
+      --shadow: 0 1px 3px rgba(0,0,0,0.12), 0 1px 2px rgba(0,0,0,0.08);
+      --shadow-md: 0 4px 6px rgba(0,0,0,0.07), 0 2px 4px rgba(0,0,0,0.05);
+      --shadow-lg: 0 10px 25px rgba(0,0,0,0.1), 0 4px 10px rgba(0,0,0,0.05);
+      --radius: 12px;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: 'Roboto', sans-serif;
+      background: #f0f4f9;
+      color: var(--on-surface);
+      min-height: 100vh;
+    }
+
+    /* HERO */
+    .hero {
+      background: linear-gradient(135deg, #1a73e8 0%, #0d47a1 60%, #1a237e 100%);
+      color: white;
+      padding: 64px 24px 80px;
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .hero::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.04'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+    }
+
+    .hero-skyline {
+      font-size: 64px;
+      margin-bottom: 16px;
+      display: block;
+      animation: float 3s ease-in-out infinite;
+    }
+
+    @keyframes float {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-8px); }
+    }
+
+    .hero h1 {
+      font-family: 'Roboto', sans-serif;
+      font-size: clamp(28px, 6vw, 52px);
+      font-weight: 700;
+      margin-bottom: 12px;
+      letter-spacing: -0.5px;
+    }
+
+    .hero h1 span { color: var(--accent); }
+
+    .hero p {
+      font-size: 18px;
+      opacity: 0.85;
+      max-width: 520px;
+      margin: 0 auto 32px;
+      font-weight: 300;
+    }
+
+    .hero-chip {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: rgba(255,255,255,0.15);
+      border: 1px solid rgba(255,255,255,0.3);
+      backdrop-filter: blur(8px);
+      border-radius: 100px;
+      padding: 8px 20px;
+      font-size: 14px;
+      font-weight: 500;
+    }
+
+    /* MAIN */
+    .container {
+      max-width: 900px;
+      margin: 0 auto;
+      padding: 0 20px 80px;
+    }
+
+    /* SECTION LABEL */
+    .section-label {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin: 40px 0 16px;
+      font-size: 13px;
+      font-weight: 700;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      color: var(--primary);
+    }
+
+    .section-label::after {
+      content: '';
+      flex: 1;
+      height: 1px;
+      background: var(--border);
+    }
+
+    /* APARTMENT CARD */
+    .apt-card {
+      background: var(--surface);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow-lg);
+      overflow: hidden;
+      margin-bottom: 24px;
+      border: 1px solid var(--border);
+      transition: transform 0.2s, box-shadow 0.2s;
+    }
+
+    .apt-card:hover { transform: translateY(-2px); box-shadow: 0 16px 40px rgba(0,0,0,0.12); }
+
+    .apt-header {
+      background: linear-gradient(135deg, #0d47a1, #283593);
+      color: white;
+      padding: 28px 32px;
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 16px;
+      flex-wrap: wrap;
+    }
+
+    .apt-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background: var(--secondary);
+      color: white;
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.5px;
+      text-transform: uppercase;
+      padding: 4px 12px;
+      border-radius: 100px;
+      margin-bottom: 8px;
+    }
+
+    .apt-name {
+      font-size: 24px;
+      font-weight: 700;
+      margin-bottom: 4px;
+    }
+
+    .apt-sub {
+      font-size: 14px;
+      opacity: 0.75;
+    }
+
+    .apt-price {
+      text-align: right;
+    }
+
+    .apt-price .amount {
+      font-size: 38px;
+      font-weight: 700;
+      color: var(--accent);
+      line-height: 1;
+    }
+
+    .apt-price .per { font-size: 13px; opacity: 0.7; }
+
+    .apt-details {
+      padding: 24px 32px;
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+      gap: 16px;
+    }
+
+    .apt-stat {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+
+    .apt-stat-label {
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: 0.5px;
+      text-transform: uppercase;
+      color: var(--on-surface-medium);
+    }
+
+    .apt-stat-value {
+      font-size: 18px;
+      font-weight: 600;
+      color: var(--on-surface);
+    }
+
+    /* BUDGET TABLE */
+    .budget-card {
+      background: var(--surface);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow-md);
+      overflow: hidden;
+      border: 1px solid var(--border);
+      margin-bottom: 24px;
+    }
+
+    .budget-row {
+      display: flex;
+      align-items: center;
+      padding: 16px 24px;
+      border-bottom: 1px solid var(--border);
+      gap: 12px;
+      transition: background 0.15s;
+    }
+
+    .budget-row:last-child { border-bottom: none; }
+    .budget-row:hover { background: #f8f9fa; }
+
+    .budget-icon {
+      width: 40px;
+      height: 40px;
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 18px;
+      flex-shrink: 0;
+    }
+
+    .budget-label { flex: 1; }
+    .budget-label-main { font-size: 15px; font-weight: 500; }
+    .budget-label-sub { font-size: 12px; color: var(--on-surface-medium); margin-top: 2px; }
+
+    .budget-amount {
+      font-size: 16px;
+      font-weight: 600;
+      color: var(--on-surface);
+      white-space: nowrap;
+    }
+
+    .budget-total-row {
+      background: linear-gradient(135deg, #1a73e8, #0d47a1);
+      color: white;
+      padding: 20px 24px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .budget-total-label {
+      font-size: 16px;
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .budget-total-amount {
+      font-size: 28px;
+      font-weight: 700;
+      color: var(--accent);
+    }
+
+    /* SALARY CARDS */
+    .salary-callout {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 16px;
+      margin-bottom: 24px;
+    }
+
+    .salary-stat-card {
+      background: var(--surface);
+      border-radius: var(--radius);
+      padding: 24px;
+      text-align: center;
+      box-shadow: var(--shadow-md);
+      border: 1px solid var(--border);
+    }
+
+    .salary-stat-card .big { font-size: 32px; font-weight: 700; color: var(--primary); }
+    .salary-stat-card .label { font-size: 13px; color: var(--on-surface-medium); margin-top: 4px; }
+    .salary-stat-card .emoji { font-size: 28px; margin-bottom: 8px; }
+
+    /* JOB CARDS */
+    .job-card {
+      background: var(--surface);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow-md);
+      border: 1px solid var(--border);
+      padding: 24px;
+      margin-bottom: 16px;
+      display: flex;
+      gap: 16px;
+      align-items: flex-start;
+      transition: transform 0.2s, box-shadow 0.2s;
+    }
+
+    .job-card:hover { transform: translateY(-2px); box-shadow: var(--shadow-lg); }
+
+    .job-logo {
+      width: 52px;
+      height: 52px;
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 26px;
+      flex-shrink: 0;
+    }
+
+    .job-info { flex: 1; }
+
+    .job-title {
+      font-size: 17px;
+      font-weight: 600;
+      margin-bottom: 4px;
+      color: var(--on-surface);
+    }
+
+    .job-company {
+      font-size: 14px;
+      color: var(--primary);
+      font-weight: 500;
+      margin-bottom: 6px;
+    }
+
+    .job-tags {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      margin-bottom: 10px;
+    }
+
+    .tag {
+      font-size: 12px;
+      padding: 3px 10px;
+      border-radius: 100px;
+      font-weight: 500;
+    }
+
+    .tag-blue { background: #e8f0fe; color: #1a73e8; }
+    .tag-green { background: #e6f4ea; color: #1e8e3e; }
+    .tag-orange { background: #fef3e2; color: #e37400; }
+    .tag-red { background: #fce8e6; color: #c5221f; }
+
+    .job-salary {
+      font-size: 15px;
+      font-weight: 700;
+      color: var(--green);
+    }
+
+    .job-link {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 13px;
+      color: var(--primary);
+      text-decoration: none;
+      font-weight: 500;
+      margin-top: 8px;
+      padding: 6px 14px;
+      border: 1px solid var(--primary);
+      border-radius: 100px;
+      transition: background 0.15s;
+    }
+
+    .job-link:hover { background: #e8f0fe; }
+
+    /* VERDICT */
+    .verdict {
+      background: linear-gradient(135deg, #0d47a1 0%, #1a237e 100%);
+      border-radius: var(--radius);
+      padding: 40px 32px;
+      text-align: center;
+      color: white;
+      margin-top: 40px;
+    }
+
+    .verdict-emoji { font-size: 56px; margin-bottom: 16px; display: block; }
+    .verdict h2 { font-size: 28px; font-weight: 700; margin-bottom: 12px; }
+    .verdict p { font-size: 16px; opacity: 0.85; max-width: 520px; margin: 0 auto; line-height: 1.6; }
+
+    .verdict-number {
+      font-size: 48px;
+      font-weight: 700;
+      color: var(--accent);
+      margin: 20px 0 8px;
+    }
+
+    .verdict-label { font-size: 14px; opacity: 0.7; margin-bottom: 24px; }
+
+    .verdict-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: var(--accent);
+      color: #1a1a1a;
+      font-weight: 700;
+      font-size: 15px;
+      padding: 14px 28px;
+      border-radius: 100px;
+      text-decoration: none;
+      transition: transform 0.15s, box-shadow 0.15s;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+    }
+
+    .verdict-btn:hover { transform: scale(1.04); box-shadow: 0 8px 20px rgba(0,0,0,0.25); }
+
+    /* FOOTER */
+    footer {
+      text-align: center;
+      padding: 32px 24px;
+      font-size: 13px;
+      color: var(--on-surface-medium);
+      border-top: 1px solid var(--border);
+    }
+
+    @media (max-width: 600px) {
+      .apt-header { padding: 20px; }
+      .apt-details { padding: 16px 20px; }
+      .apt-price .amount { font-size: 28px; }
+      .apt-name { font-size: 20px; }
+      .budget-row { padding: 14px 16px; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- HERO -->
+  <div class="hero">
+    <span class="hero-skyline">🗽</span>
+    <h1>Can You Afford <span>Manhattan</span>?</h1>
+    <p>We found the most expensive apartment in NYC and built the budget you'd need to survive. Spoiler: it's wild.</p>
+    <div class="hero-chip">🏙️ A financial reality check for youth night</div>
+  </div>
+
+  <div class="container">
+
+    <!-- APARTMENT -->
+    <div class="section-label">🏢 The Apartment</div>
+    <div class="apt-card">
+      <div class="apt-header">
+        <div>
+          <div class="apt-badge">🔥 Most Expensive Rental in NYC</div>
+          <div class="apt-name">The Surrey Penthouse Suite</div>
+          <div class="apt-sub">20 East 76th Street, Upper East Side, Manhattan</div>
+        </div>
+        <div class="apt-price">
+          <div class="amount">$500K</div>
+          <div class="per">per month</div>
+        </div>
+      </div>
+      <div class="apt-details">
+        <div class="apt-stat">
+          <span class="apt-stat-label">Size</span>
+          <span class="apt-stat-value">8,000 sq ft</span>
+        </div>
+        <div class="apt-stat">
+          <span class="apt-stat-label">Bedrooms</span>
+          <span class="apt-stat-value">6 BR / 7 BA</span>
+        </div>
+        <div class="apt-stat">
+          <span class="apt-stat-label">Views</span>
+          <span class="apt-stat-value">Central Park 🌳</span>
+        </div>
+        <div class="apt-stat">
+          <span class="apt-stat-label">Amenities</span>
+          <span class="apt-stat-value">Full hotel staff</span>
+        </div>
+        <div class="apt-stat">
+          <span class="apt-stat-label">Per Day</span>
+          <span class="apt-stat-value">$16,666 😳</span>
+        </div>
+        <div class="apt-stat">
+          <span class="apt-stat-label">Per Hour</span>
+          <span class="apt-stat-value">$694 🤯</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- BUDGET -->
+    <div class="section-label">💸 Monthly Budget Breakdown</div>
+
+    <div class="budget-card">
+      <div class="budget-row">
+        <div class="budget-icon" style="background:#e8f0fe;">🏠</div>
+        <div class="budget-label">
+          <div class="budget-label-main">The Surrey Penthouse</div>
+          <div class="budget-label-sub">Rent — Upper East Side, Manhattan</div>
+        </div>
+        <div class="budget-amount">$500,000</div>
+      </div>
+      <div class="budget-row">
+        <div class="budget-icon" style="background:#fef3e2;">🍽️</div>
+        <div class="budget-label">
+          <div class="budget-label-main">Dining & Groceries</div>
+          <div class="budget-label-sub">Michelin stars + Whole Foods delivery</div>
+        </div>
+        <div class="budget-amount">$8,000</div>
+      </div>
+      <div class="budget-row">
+        <div class="budget-icon" style="background:#fce8e6;">🚖</div>
+        <div class="budget-label">
+          <div class="budget-label-main">Transportation</div>
+          <div class="budget-label-sub">Private car service + occasional cab</div>
+        </div>
+        <div class="budget-amount">$4,000</div>
+      </div>
+      <div class="budget-row">
+        <div class="budget-icon" style="background:#e6f4ea;">👔</div>
+        <div class="budget-label">
+          <div class="budget-label-main">Clothing & Personal</div>
+          <div class="budget-label-sub">Because the Upper East Side has standards</div>
+        </div>
+        <div class="budget-amount">$5,000</div>
+      </div>
+      <div class="budget-row">
+        <div class="budget-icon" style="background:#f3e8fd;">🎭</div>
+        <div class="budget-label">
+          <div class="budget-label-main">Entertainment</div>
+          <div class="budget-label-sub">Broadway, galas, rooftop bars</div>
+        </div>
+        <div class="budget-amount">$6,000</div>
+      </div>
+      <div class="budget-row">
+        <div class="budget-icon" style="background:#fef3e2;">🏋️</div>
+        <div class="budget-label">
+          <div class="budget-label-main">Health & Fitness</div>
+          <div class="budget-label-sub">Equinox + personal trainer + spa</div>
+        </div>
+        <div class="budget-amount">$2,500</div>
+      </div>
+      <div class="budget-row">
+        <div class="budget-icon" style="background:#e8f0fe;">📱</div>
+        <div class="budget-label">
+          <div class="budget-label-main">Utilities & Tech</div>
+          <div class="budget-label-sub">Internet, phone, streaming — all of them</div>
+        </div>
+        <div class="budget-amount">$1,200</div>
+      </div>
+      <div class="budget-row">
+        <div class="budget-icon" style="background:#fce8e6;">🏦</div>
+        <div class="budget-label">
+          <div class="budget-label-main">Taxes (NY State + City + Federal)</div>
+          <div class="budget-label-sub">~52% of gross at this income level 😬</div>
+        </div>
+        <div class="budget-amount">$1,595,833</div>
+      </div>
+      <div class="budget-total-row">
+        <div class="budget-total-label">💰 Total Monthly Earnings Needed</div>
+        <div class="budget-total-amount">$3,122,533</div>
+      </div>
+    </div>
+
+    <!-- SALARY STATS -->
+    <div class="salary-callout">
+      <div class="salary-stat-card">
+        <div class="emoji">📅</div>
+        <div class="big">$37.5M</div>
+        <div class="label">Salary needed per year</div>
+      </div>
+      <div class="salary-stat-card">
+        <div class="emoji">😴</div>
+        <div class="big">$102K</div>
+        <div class="label">You earn while you sleep (per night)</div>
+      </div>
+      <div class="salary-stat-card">
+        <div class="emoji">📊</div>
+        <div class="big">~1,000x</div>
+        <div class="label">The median US salary</div>
+      </div>
+    </div>
+
+    <!-- JOBS -->
+    <div class="section-label">💼 Jobs That Could Actually Pay This</div>
+
+    <div class="job-card">
+      <div class="job-logo" style="background:#e8f0fe;">🏦</div>
+      <div class="job-info">
+        <div class="job-title">Managing Director, Investment Banking</div>
+        <div class="job-company">Goldman Sachs — New York, NY</div>
+        <div class="job-tags">
+          <span class="tag tag-blue">Finance</span>
+          <span class="tag tag-green">Full-Time</span>
+          <span class="tag tag-orange">Senior Level</span>
+        </div>
+        <div class="job-salary">💵 $2M – $15M+ / year (base + bonus)</div>
+        <p style="font-size:13px;color:#5f6368;margin-top:8px;">Lead major M&A transactions, IPOs, and capital raises for Fortune 500 clients. You'll need an MBA from a target school and 15+ years climbing the ladder first. No biggie.</p>
+        <a class="job-link" href="https://www.linkedin.com/jobs/goldman-sachs-managing-director-jobs" target="_blank">🔗 View on LinkedIn</a>
+      </div>
+    </div>
+
+    <div class="job-card">
+      <div class="job-logo" style="background:#fce8e6;">📈</div>
+      <div class="job-info">
+        <div class="job-title">Hedge Fund Portfolio Manager</div>
+        <div class="job-company">Citadel / Millennium — Midtown Manhattan</div>
+        <div class="job-tags">
+          <span class="tag tag-red">Hedge Fund</span>
+          <span class="tag tag-green">Full-Time</span>
+          <span class="tag tag-orange">Elite Only</span>
+        </div>
+        <div class="job-salary">💵 $1M – $30M+ / year (P&L based)</div>
+        <p style="font-size:13px;color:#5f6368;margin-top:8px;">Manage a multi-billion dollar book of trades. Your take-home depends on your performance and P&L — 20% of what you earn for the fund. Stress not included (jk it's all stress).</p>
+        <a class="job-link" href="https://www.glassdoor.com/Job/new-york-hedge-fund-portfolio-manager-jobs-SRCH_IL.0,8_IC1132348_KO9,37.htm" target="_blank">🔗 View on Glassdoor</a>
+      </div>
+    </div>
+
+    <div class="job-card">
+      <div class="job-logo" style="background:#e6f4ea;">⚖️</div>
+      <div class="job-info">
+        <div class="job-title">Senior Partner, Corporate Law</div>
+        <div class="job-company">Skadden / Sullivan & Cromwell — Wall Street, NY</div>
+        <div class="job-tags">
+          <span class="tag tag-blue">Legal</span>
+          <span class="tag tag-green">Full-Time</span>
+          <span class="tag tag-orange">Partner Track</span>
+        </div>
+        <div class="job-salary">💵 $1M – $5M+ / year</div>
+        <p style="font-size:13px;color:#5f6368;margin-top:8px;">Handle mergers, acquisitions, and complex securities law for the biggest companies in the world. Only ~2% of lawyers make partner at firms like this. Worth it for the view.</p>
+        <a class="job-link" href="https://www.indeed.com/q-senior-corporate-attorney-partner-l-manhattan,-ny-jobs.html" target="_blank">🔗 View on Indeed</a>
+      </div>
+    </div>
+
+    <!-- VERDICT -->
+    <div class="verdict">
+      <span class="verdict-emoji">🤯</span>
+      <h2>The Verdict</h2>
+      <div class="verdict-number">$37,470,396</div>
+      <div class="verdict-label">annual gross income needed to live here comfortably</div>
+      <p>That's roughly what 1,040 average Americans earn combined. In a year. To afford one apartment. In one city. For one month.</p>
+      <br><br>
+      <p style="color: #fbbc04; font-weight: 500;">💡 Moral of the story: Choose your career wisely — and maybe skip Manhattan.</p>
+    </div>
+
+  </div>
+
+  <footer>
+    <p>Built by Toast 🍞 for youth night at the ward · March 2026 · Data sourced from CityRealty, Glassdoor & LinkedIn</p>
+  </footer>
+
+</body>
+</html>
